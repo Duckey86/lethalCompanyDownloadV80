@@ -25,8 +25,8 @@ STATE_FILE = "mod_installer_state.json"
 # --- Performance tuning ---
 PARALLEL_THREADS = 8               # Number of parallel connections for large files (>100 MB)
 PARALLEL_THRESHOLD_MB = 100        # Use parallel download if file larger than this (MB)
-CHUNK_SIZE_SINGLE = 16 * 1024 * 1024    # 1 MB for single‑thread streaming
-CHUNK_SIZE_PARALLEL = 16 * 1024 * 1024  # 1 MB per part thread
+CHUNK_SIZE_SINGLE = 1 * 1024 * 1024    # 1 MB for single‑thread streaming
+CHUNK_SIZE_PARALLEL = 1 * 1024 * 1024  # 1 MB per part thread
 
 
 def resource_path(relative_path):
@@ -314,7 +314,7 @@ def process_zip(session, url, game_folder, label="", state=None):
 
             if all(os.path.exists(t) for _, t in files_to_extract):
                 print(f"> [SKIP] All {len(files_to_extract)} files already present.")
-                if state is not None:  # <-- add these 3 lines
+                if state is not None: # Write back to mod installer state json
                     state[url] = True
                     save_install_state(game_folder, state)
                 return
