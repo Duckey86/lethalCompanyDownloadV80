@@ -33,8 +33,6 @@ def resource_path(relative_path):
         return os.path.join(sys._MEIPASS, relative_path)
     return os.path.join(os.path.abspath("."), relative_path)
 
-# Inside ModernInstaller.__init__, after root is created:
-
 # Constants
 GAME_URL = "https://github.com/Duckey86/lethalCompanyDownloadV80/releases/download/Release1/DuckeyLethal.zip"
 APP_NAME = "Lethal Company"
