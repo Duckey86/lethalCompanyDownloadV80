@@ -1,6 +1,5 @@
 """
 Lethal Company Repack Installer
-Author: Duckey
 """
 import urllib.request
 import ssl
@@ -22,27 +21,24 @@ import winshell
 import sys
 import os
 
-# ---------- Fix SSL certificate verification ----------
+# SSL certificate verification
 ssl_context = ssl.create_default_context(cafile=certifi.where())
 https_handler = urllib.request.HTTPSHandler(context=ssl_context)
 opener = urllib.request.build_opener(https_handler)
 urllib.request.install_opener(opener)
-# ----------------------------------------------------
 
 def resource_path(relative_path):
-    """Get absolute path to resource, works for dev and PyInstaller bundle."""
+    """Get absolute path to resource for PyInstaller when bundling."""
     if getattr(sys, 'frozen', False):
-        # running as exe -> files are in _MEIPASS temp folder
         return os.path.join(sys._MEIPASS, relative_path)
     return os.path.join(os.path.abspath("."), relative_path)
 
 # Inside ModernInstaller.__init__, after root is created:
 
-# ---------- Config ----------
+# Constants
 GAME_URL = "https://github.com/Duckey86/lethalCompanyDownloadV80/releases/download/Release1/DuckeyLethal.zip"
 APP_NAME = "Lethal Company"
 SHORTCUT_NAME = "Lethal Company (M4CKD0GE Repack).lnk"
-# ---------------------------
 
 class ModernInstaller:
     def __init__(self, root):
@@ -91,7 +87,7 @@ class ModernInstaller:
         self.progress_canvas = tk.Canvas(progress_frame, height=12, bg="#f0f0f0", bd=0, highlightthickness=0)
         self.progress_canvas.pack(fill=tk.X)
 
-        # Stats row (percentage, speed, ETA)
+        # Stats
         stats_frame = tk.Frame(progress_frame, bg="#f0f0f0")
         stats_frame.pack(fill=tk.X, pady=5)
         self.pct_label = tk.Label(stats_frame, text="0%", font=("Segoe UI", 16, "bold"), fg="#2c3e50", bg="#f0f0f0")
@@ -122,7 +118,6 @@ class ModernInstaller:
         if folder:
             self.dir_var.set(folder)
 
-    # ---------- UI update helpers ----------
     def update_status(self, msg):
         self.status_label.config(text=msg)
 
@@ -149,7 +144,7 @@ class ModernInstaller:
         self.cancel_flag = True
         self.update_status("Cancelling...")
 
-    # ---------- Installation workflow ----------
+    # Installations
     def start_install(self):
         self.install_btn.config(state=tk.DISABLED)
         self.cancel_btn.config(state=tk.NORMAL)
@@ -158,7 +153,7 @@ class ModernInstaller:
         threading.Thread(target=self.install_thread, daemon=True).start()
 
     def install_thread(self):
-        # Initialize COM for this thread (needed for winshell)
+        # Initialize COM for this thread
         pythoncom.CoInitialize()
         try:
             dest_str = self.dir_var.get()
@@ -228,7 +223,7 @@ class ModernInstaller:
                     shutil.move(str(item), str(dest / item.name))
                 shutil.rmtree(str(game_subfolder))
 
-            # Desktop shortcut (now COM is initialized)
+            # Desktop shortcut
             desktop = Path(winshell.desktop())
             shortcut = desktop / SHORTCUT_NAME
             exe_path = dest / f"{APP_NAME}.exe"
@@ -249,7 +244,7 @@ class ModernInstaller:
             self.root.after(0, lambda: self.install_btn.config(state=tk.NORMAL))
             self.root.after(0, lambda: self.cancel_btn.config(state=tk.DISABLED))
 
-# ---------- Main ----------
+# Main
 if __name__ == "__main__":
     root = tk.Tk()
     app = ModernInstaller(root)
